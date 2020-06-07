@@ -6,20 +6,19 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.LinearLayout.VERTICAL
 import com.google.android.material.textfield.TextInputLayout
+import com.skedsoft.df.form.Form
 
-class JsonFormBuilder(private val context: Context) : FormBuilder {
+class JsonFormBuilder(private val context: Context, private val form: Form) : FormBuilder {
     override fun build(): View {
-
         val root = form()
-
-        val customerNameWrapper = formFieldWrapper("Name")
-
-        val customerNameEditText = formField("customer_name")
-
-        customerNameWrapper.addView(customerNameEditText)
-
-        root.addView(customerNameWrapper)
+        form.fields.forEach {
+            val wrapper = formFieldWrapper(it.label)
+            val field = formField(it.id)
+            wrapper.addView(field)
+            root.addView(wrapper)
+        }
         return root
     }
 
@@ -41,10 +40,11 @@ class JsonFormBuilder(private val context: Context) : FormBuilder {
     }
 
     private fun form(): ViewGroup {
-        val root: ViewGroup = LinearLayout(context)
+        val root = LinearLayout(context)
         val factor = context.resources.displayMetrics.density;
         val rootPadding = (16 * factor).toInt()
         root.setPadding(rootPadding, rootPadding, rootPadding, rootPadding)
+        root.orientation = VERTICAL
         return root
     }
 }
